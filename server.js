@@ -1,10 +1,15 @@
 const express = require('express');
+const favicon = require('serve-favicon');
+const path = require('path');
+const fs = require('fs');
 const webSocketServer = require('ws').Server;
 
 const PORT = process.env.PORT || 5000;
 const INDEX = './public/index.html';
 
 const server = express()
+.use(favicon(path.join(__dirname,'public','assets','images','favicon.ico')))
+
 .get('/', (req, res) => {
     res.sendFile(INDEX, {root: __dirname});
 })
@@ -19,13 +24,70 @@ const server = express()
     res.sendFile(`./public/style/${req.params.cssName}`, {root: __dirname});
 })
 
+.get('/share', (req, res) => {
+    console.log(req.query.id)
+    fs.readFile(__dirname + '/public/page/share.html', 'utf8', (err, text) => {
+        console.log(text)
+        // let customResponse = text
+        // customResponse
+        res.send(text.replace("7382e81e-f6e5-47e2-bc47-e890f2304cdc", "un truc custom"));
+    });
+})
+
 .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-const wss = new webSocketServer({ server });
+const wss = new webSocketServer({ server, clientTracking: true });
+const { v4: uuidv4 } = require('uuid');
 
+let clients = new Map()
 wss.on("connection", (ws) => {
-    console.log("new ws connection")
-    setInterval(() => {
-        ws.send("meh")
-    },1000)
+    console.log(ws.id)
+    ws.id = 4
+    console.log(ws.id)
+    // console.log(ws)
+    ws.on("message", (data) => {
+        try{
+            message = JSON.parse(data);
+        }catch(e){
+            console.log("unrecognized data : \n"+data.data);
+            return;
+        }
+        switch(message.state){
+            case "ID":
+                if(!message.wsId){
+                    wsId = uuidv4();
+                    clients.set(wsId, {wsId: wsId})
+                    detail = "new connection";
+                } else {
+                    wsId = message.wsId;
+                    detail = "resume connection";
+                }
+                ws.send(JSON.stringify({
+                    state: "ID",
+                    detail: detail,
+                    wsId: wsId
+                }))
+                break;
+        }
+    })
+
+    ws.on("close", () => {
+        console.log("dead co")
+    })
+
+    ws.onclose = data => {
+        console.log("dead co")
+    }
+    // if(!ws.id) {
+
+    // }
+    
+    // setInterval(() => {
+    //     ws.send("meh")
+    // },1000)
 })
+
+
+// setInterval(() => {
+//     console.log(wss.clients)
+// }, 1000)
