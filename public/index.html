@@ -15,9 +15,20 @@
 
     <setup-screen class="hide">
         <div class="setup__join">
-
+            
         </div>
-        <div class="setup__create"></div>
+        <div class="setup__create">
+            <form action="#" id="setupForm">
+                <label for="playerName">PlayerName</label>
+                <input type="text" name="playerName" id="playerName" required>
+                <label for="pyramidHeight">Height of the pyramid</label>
+                <input type="number" name="pyramidHeight" id="pyramidHeight">
+                <button id="pyramidHeightBtn">
+                    Creer un salle
+                </button>
+
+            </form>
+        </div>
     </setup-screen>
     <script src="./js/script.js"></script>
 </body>

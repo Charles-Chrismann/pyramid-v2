@@ -30,7 +30,7 @@ const server = express()
         console.log(text)
         // let customResponse = text
         // customResponse
-        res.send(text.replace("7382e81e-f6e5-47e2-bc47-e890f2304cdc", "un truc custom"));
+        res.send(text.replaceAll("7382e81e-f6e5-47e2-bc47-e890f2304cdc", "un truc custom"));
     });
 })
 
@@ -38,8 +38,11 @@ const server = express()
 
 const wss = new webSocketServer({ server, clientTracking: true });
 const { v4: uuidv4 } = require('uuid');
+const { Game } = require('./game/game');
+const { Player } = require('./game/player');
 
 let clients = new Map()
+let games = new Map()
 wss.on("connection", (ws) => {
     console.log(ws.id)
     ws.id = 4
@@ -67,6 +70,19 @@ wss.on("connection", (ws) => {
                     detail: detail,
                     wsId: wsId
                 }))
+                break;
+            case "SETUP":
+                switch(message.action){
+                    case "height":
+                        console.log(message)
+                        let newGame = new Game(message.height, message.playerName, message.wsId)
+                        let owner = new Player(message.playerName, message.wsId)
+                        newGame.players.set(message.wsId, owner)
+                        games.set(newGame.id, newGame)
+                        console.log(games)
+                        console.log(newGame.players)
+                        break;
+                }
                 break;
         }
     })

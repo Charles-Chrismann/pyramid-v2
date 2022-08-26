@@ -2,9 +2,9 @@ const { v4: uuidv4 } = require('uuid');
 
 module.exports = {
     Player: class Player {
-        constructor(pseudo){
+        constructor(pseudo, wsId){
             this.pseudo = pseudo;
-            this.id = uuidv4();
+            this.wSid = wsId;
             this.gameId;
             this.deck;
             this.hasDrunk;

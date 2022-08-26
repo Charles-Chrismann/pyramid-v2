@@ -1,10 +1,16 @@
+const { v4: uuidv4 } = require('uuid');
 const colors = ["♦️", "♥️", "♣️", "♠️"];
 const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 
 module.exports = {
     Game: class Game {
-        constructor(){
-            this.finalCardPackage
+        constructor(height, owner, ownerId){
+            this.height = height;
+            this.finalCardPackage;
+            this.players = new Map;
+            this.id = uuidv4();
+            this.owner = owner;
+            this.ownerId = ownerId;
         }
     
         /**

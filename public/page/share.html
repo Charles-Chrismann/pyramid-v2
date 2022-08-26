@@ -12,6 +12,12 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <script>
+        setTimeout(() => {
+            let params = new URLSearchParams(window.location.search)
+            console.log(params.get("id"))
+            document.location.replace(window.location.protocol + '//' + window.location.host + "?id=" +params.get("id") + "&action=join" + "&owner=7382e81e-f6e5-47e2-bc47-e890f2304cdc")
+        },1000)
+    </script>
 </body>
 </html>
